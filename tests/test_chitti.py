@@ -38,3 +38,9 @@ def test_phishing_url():
 def test_empty_url():
     r = client.post("/predict", json={"url": "   "})
     assert r.status_code == 400
+
+
+def test_reasons_present():
+    url = "secure-paypal-login.verify-account.xyz/webscr.php?cmd=login"
+    r = client.post("/predict", json={"url": url})
+    assert len(r.json()["reasons"]) > 0
