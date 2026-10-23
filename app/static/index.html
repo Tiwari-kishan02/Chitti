@@ -3,110 +3,205 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chitti - AI Security Assistant</title>
+<meta name="theme-color" content="#0b1220">
+<title>Chitti - AI Assistant</title>
 <style>
+  :root { --bg:#0b1220; --panel:#111a2e; --line:#1e2a44; --text:#e2e8f0;
+          --muted:#8da2c0; --accent:#22d3ee; --user:#2563eb; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #0f172a;
-         color: #e2e8f0; display: flex; justify-content: center; height: 100vh; }
-  .app { width: 100%; max-width: 720px; display: flex; flex-direction: column; height: 100%; }
-  header { padding: 16px 20px; border-bottom: 1px solid #1e293b; }
-  header h1 { margin: 0; font-size: 20px; }
-  header p { margin: 4px 0 0; font-size: 13px; color: #94a3b8; }
-  #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-  .msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; line-height: 1.45;
-         white-space: pre-wrap; word-break: break-word; }
-  .bot { background: #1e293b; align-self: flex-start; }
-  .user { background: #2563eb; align-self: flex-end; }
-  .safe { border-left: 4px solid #22c55e; }
-  .bad { border-left: 4px solid #ef4444; }
-  .small { font-size: 13px; color: #94a3b8; margin-top: 6px; }
-  form { display: flex; gap: 8px; padding: 16px; border-top: 1px solid #1e293b; }
-  input { flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid #334155;
-          background: #0b1220; color: #e2e8f0; font-size: 15px; }
-  button { padding: 12px 18px; border: 0; border-radius: 10px; background: #2563eb;
-           color: white; font-size: 15px; cursor: pointer; }
-  button:disabled { opacity: .6; cursor: default; }
-  footer { text-align: center; font-size: 12px; color: #64748b; padding: 0 16px 12px; }
+  html, body { height: 100%; }
+  body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:var(--bg);
+         color:var(--text); display:flex; justify-content:center; }
+  .app { width:100%; max-width:760px; height:100dvh; display:flex; flex-direction:column; }
+  header { padding:14px 18px; border-bottom:1px solid var(--line); display:flex;
+           align-items:center; gap:12px; }
+  .logo { width:42px; height:42px; border-radius:12px; background:var(--panel);
+          border:1px solid var(--accent); display:flex; align-items:center;
+          justify-content:center; font-size:22px; box-shadow:0 0 12px rgba(34,211,238,.35); }
+  header h1 { margin:0; font-size:19px; letter-spacing:.5px; }
+  header p { margin:2px 0 0; font-size:12px; color:var(--muted); }
+  #chat { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:12px; }
+  .msg { max-width:88%; padding:10px 14px; border-radius:14px; line-height:1.5;
+         word-break:break-word; font-size:15px; }
+  .bot { background:var(--panel); align-self:flex-start; border:1px solid var(--line); }
+  .user { background:var(--user); align-self:flex-end; white-space:pre-wrap; }
+  .safe { border-left:4px solid #22c55e; }
+  .bad { border-left:4px solid #ef4444; }
+  .note { font-size:13px; color:var(--muted); margin-top:8px; white-space:pre-wrap; }
+  .msg code { background:#0b1220; padding:1px 5px; border-radius:5px; font-size:13px; }
+  .code { margin:8px 0; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#070d19; }
+  .codebar { display:flex; justify-content:space-between; align-items:center; padding:4px 10px;
+             background:#0f1a30; font-size:12px; color:var(--muted); }
+  .copy { background:transparent; border:1px solid var(--line); color:var(--text);
+          border-radius:6px; padding:2px 8px; cursor:pointer; font-size:12px; }
+  pre { margin:0; padding:10px 12px; overflow-x:auto; }
+  pre code { background:none; padding:0; font-size:13px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 10px; }
+  .chip { background:var(--panel); border:1px solid var(--line); color:var(--text);
+          border-radius:999px; padding:6px 12px; font-size:13px; cursor:pointer; }
+  .chip:hover { border-color:var(--accent); }
+  form { display:flex; gap:8px; padding:12px 18px; border-top:1px solid var(--line); align-items:flex-end; }
+  textarea { flex:1; resize:none; max-height:140px; padding:11px 13px; border-radius:12px;
+             border:1px solid var(--line); background:var(--panel); color:var(--text);
+             font-size:15px; font-family:inherit; }
+  textarea:focus { outline:none; border-color:var(--accent); }
+  button.send { padding:11px 18px; border:0; border-radius:12px; background:var(--accent);
+                color:#04222a; font-weight:600; font-size:15px; cursor:pointer; }
+  button.send:disabled { opacity:.5; cursor:default; }
+  footer { text-align:center; font-size:11px; color:#5f7394; padding:0 14px 10px; }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <h1>Chitti</h1>
-    <p>AI security assistant: paste a link and I will check if it looks like phishing</p>
+    <div class="logo">&#129302;</div>
+    <div>
+      <h1>CHITTI</h1>
+      <p>AI assistant by Kishan Tiwari &middot; Speed 1 THz &middot; Memory 1 ZB</p>
+    </div>
   </header>
+
   <div id="chat"></div>
+
+  <div class="chips" id="chips">
+    <button class="chip" type="button">Who are you?</button>
+    <button class="chip" type="button">Is google.com safe?</button>
+    <button class="chip" type="button">Write a Python program for fibonacci series</button>
+    <button class="chip" type="button">Explain DBMS in simple words</button>
+    <button class="chip" type="button">What is phishing?</button>
+  </div>
+
   <form id="form">
-    <input id="input" type="text" placeholder="Paste a link or message here..." autocomplete="off">
-    <button id="send" type="submit">Check</button>
+    <textarea id="input" rows="1" maxlength="4000"
+      placeholder="Ask anything, or paste a link, password or message..."></textarea>
+    <button class="send" id="send" type="submit">Send</button>
   </form>
-  <footer>Chitti is a machine learning model. It can make mistakes, so stay careful.</footer>
+  <footer>Chitti can make mistakes. Never share real passwords, OTPs or card details here.</footer>
 </div>
 
 <script>
   const chat = document.getElementById("chat");
   const form = document.getElementById("form");
   const input = document.getElementById("input");
-  const btn = document.getElementById("send");
-  const URL_REGEX = /(?:https?:\/\/)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?:[\/?#]\S*)?/gi;
+  const sendBtn = document.getElementById("send");
+  const chips = document.getElementById("chips");
+  let history = [];
 
-  function addMessage(text, who, extraClass, note) {
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function render(text) {
+    const parts = text.split("```");
+    let html = "";
+    parts.forEach((part, i) => {
+      if (i % 2 === 1) {
+        const nl = part.indexOf("\n");
+        const lang = nl > -1 ? part.slice(0, nl).trim() : "";
+        const code = nl > -1 ? part.slice(nl + 1) : part;
+        html += '<div class="code"><div class="codebar"><span>' +
+          escapeHtml(lang || "code") +
+          '</span><button class="copy" type="button">Copy</button></div><pre><code>' +
+          escapeHtml(code.replace(/\n$/, "")) + "</code></pre></div>";
+      } else {
+        let t = escapeHtml(part);
+        t = t.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+        t = t.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+        html += t.replace(/\n/g, "<br>");
+      }
+    });
+    return html;
+  }
+
+  function addUser(text) {
     const div = document.createElement("div");
-    div.className = "msg " + who + (extraClass ? " " + extraClass : "");
+    div.className = "msg user";
     div.textContent = text;
-    if (note) {
-      const s = document.createElement("div");
-      s.className = "small";
-      s.textContent = note;
-      div.appendChild(s);
-    }
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
   }
 
-  async function checkUrl(url) {
-    const res = await fetch("/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: url })
-    });
-    if (!res.ok) throw new Error("Server error");
-    return res.json();
+  function addBot(text, status, notes) {
+    const div = document.createElement("div");
+    div.className = "msg bot" + (status === "bad" ? " bad" : status === "safe" ? " safe" : "");
+    div.innerHTML = render(text);
+    if (notes) {
+      const n = document.createElement("div");
+      n.className = "note";
+      n.textContent = notes.split(" | ").join("\n");
+      div.appendChild(n);
+    }
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
   }
 
-  addMessage("Hi, I am Chitti. Paste any link (or a message that has a link) and I will check it for phishing.", "bot");
+  chat.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("copy")) return;
+    const code = e.target.closest(".code").querySelector("code").textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      e.target.textContent = "Copied";
+      setTimeout(() => { e.target.textContent = "Copy"; }, 1500);
+    });
+  });
 
-  form.addEventListener("submit", async (e) => {
+  async function send(text) {
+    addUser(text);
+    chips.style.display = "none";
+    sendBtn.disabled = true;
+    const thinking = addBot("Thinking...");
+
+    try {
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history: history.slice(-10) })
+      });
+      const data = await res.json();
+      thinking.remove();
+
+      if (!res.ok) {
+        addBot(data.detail || "Something went wrong. Please try again.");
+      } else {
+        addBot(data.reply, data.status, data.notes);
+        history.push({ role: "user", content: text });
+        history.push({ role: "assistant", content: data.reply });
+        history = history.slice(-12);
+      }
+    } catch (err) {
+      thinking.remove();
+      addBot("I could not reach the server. Please check your connection and try again.");
+    }
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     const text = input.value.trim();
-    if (!text) return;
-    addMessage(text, "user");
+    if (!text || sendBtn.disabled) return;
     input.value = "";
-
-    const urls = text.match(URL_REGEX);
-    if (!urls) {
-      addMessage("I could not find a link in your message. Paste a URL and I will check it.", "bot");
-      return;
-    }
-
-    btn.disabled = true;
-    for (const u of urls.slice(0, 5)) {
-      try {
-        const r = await checkUrl(u);
-        const pct = Math.round(r.phishing_probability * 100);
-        const bad = r.verdict === "PHISHING";
-        const title = bad
-          ? "Dangerous: " + u + "\nThis looks like PHISHING (" + pct + "% risk). Do not open it or enter any details."
-          : "Looks safe: " + u + "\nRisk score " + pct + "%. Still, be careful with links you did not expect.";
-        const note = r.reasons.length ? "What I noticed: " + r.reasons.join("; ") : null;
-        addMessage(title, "bot", bad ? "bad" : "safe", note);
-      } catch (err) {
-        addMessage("Something went wrong. Please try again.", "bot");
-      }
-    }
-    btn.disabled = false;
-    input.focus();
+    input.style.height = "auto";
+    send(text);
   });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 140) + "px";
+  });
+
+  chips.addEventListener("click", (e) => {
+    if (e.target.classList.contains("chip")) send(e.target.textContent);
+  });
+
+  addBot("Hi, I am Chitti. Ask me about studies, history or code, or send me a link, password or suspicious message to check.");
 </script>
 </body>
 </html>
