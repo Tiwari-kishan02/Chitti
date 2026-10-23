@@ -44,3 +44,20 @@ def test_reasons_present():
     url = "secure-paypal-login.verify-account.xyz/webscr.php?cmd=login"
     r = client.post("/predict", json={"url": url})
     assert len(r.json()["reasons"]) > 0
+
+
+
+def test_chat_creator():
+    r = client.post("/chat", json={"message": "who made you"})
+    assert r.json()["intent"] == "creator"
+    assert "Kishan Tiwari" in r.json()["reply"]
+
+
+def test_chat_no_images():
+    r = client.post("/chat", json={"message": "generate an image of a cat"})
+    assert r.json()["intent"] == "image_request"
+
+
+def test_chat_intro():
+    r = client.post("/chat", json={"message": "who are you"})
+    assert "terahertz" in r.json()["reply"].lower()

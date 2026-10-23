@@ -1,0 +1,92 @@
+INTENTS = {
+    "greeting": [
+        "hi", "hello", "hey", "hey chitti", "hello chitti", "namaste",
+        "good morning", "good evening", "hi there", "yo", "hola", "hii",
+        "hello there", "hey there chitti",
+    ],
+    "about": [
+        "who are you", "what are you", "what is your name", "what can you do",
+        "help", "help me", "what do you do", "tell me about yourself",
+        "how can you help me", "what are your features", "what is chitti",
+        "who made you", "are you a bot", "how do you work",
+    ],
+    "thanks": [
+        "thanks", "thank you", "thanks a lot", "thank you chitti", "thx",
+        "great thanks", "ok thanks", "awesome thank you", "bye", "goodbye",
+        "see you", "ok bye", "that helps thanks", "cool thanks",
+        "good bye chitti",
+    ],
+    "check_url": [
+        "is this link safe", "check this url", "can you check this website",
+        "is this website a scam", "is this link phishing",
+        "check this link for me", "is www.example.com safe",
+        "is this site fake", "should i click this link", "verify this url",
+        "is this link dangerous", "check if this site is safe",
+        "scan this link", "is this url malicious", "can i trust this website",
+    ],
+    "check_password": [
+        "is my password strong", "check my password strength",
+        "how strong is my password", "check password", "rate my password",
+        "is this password safe", "test my password",
+        "password strength checker", "is my password good enough",
+        "how secure is my password", "check this password",
+        "can you check my password", "is this a strong password",
+        "evaluate my password",
+    ],
+    "scam_message": [
+        "i got a message saying i won a lottery", "is this sms a scam",
+        "someone called asking for my otp", "i received a kyc update message",
+        "is this message fake", "got a text that my bank account is blocked",
+        "check this message for fraud", "is this email a scam",
+        "i got a suspicious message", "someone asked me to share otp",
+        "a message says i won a prize", "is this whatsapp message a scam",
+        "i received a message to claim refund", "is this sms from bank real",
+        "got a call from fake bank", "is this offer message genuine",
+    ],
+    "security_qa": [
+        "what is phishing", "what is ransomware", "what is malware",
+        "what is two factor authentication", "what is a vpn",
+        "how to stay safe online", "how to create a strong password",
+        "what is social engineering", "what is a firewall", "what is https",
+        "what is sql injection", "how does phishing work", "explain 2fa",
+        "what is a man in the middle attack", "how can i protect my account",
+        "what is an otp scam", "what is a password manager",
+    ],
+}
+
+
+
+INTENTS["about"].remove("who made you")
+INTENTS["about"] += [
+    "tum kaun ho", "aap kaun ho", "apna intro do", "introduce yourself",
+    "tum kya kar sakte ho", "tell me about you", "what is your speed",
+]
+INTENTS["creator"] = [
+    "who made you", "who created you", "who built you", "who is your creator",
+    "who is your developer", "who developed chitti", "who is your owner",
+    "tumhe kisne banaya", "kisne banaya tumhe", "tumhara creator kaun hai",
+    "who is your maker", "who programmed you", "who designed you",
+]
+INTENTS["image_request"] = [
+    "generate an image of a cat", "draw a picture", "create a photo of a dog",
+    "make an image", "generate a logo", "make me a picture",
+    "draw a cat", "create a poster image", "generate ai image",
+    "can you draw", "create a picture of a mountain", "photo bana do",
+    "ek image generate karo", "draw me a house",
+]
+INTENTS["general"] = [
+    "write a python program to reverse a string", "explain photosynthesis",
+    "who is the prime minister of india", "history of the indian national congress",
+    "what is the capital of france", "solve this math problem",
+    "write html code for a login page", "explain object oriented programming",
+    "difference between list and tuple", "tell me a joke",
+    "how to learn java", "notes on dbms for bsc it",
+    "explain operating system", "who was mahatma gandhi",
+    "what happened in 1857", "explain the indian constitution",
+    "write a c program for factorial", "what is machine learning",
+    "translate this sentence to hindi", "give me study tips for exams",
+    "mujhe python sikhao", "bharat ki rajniti ke baare mein batao",
+    "mujhe code likh ke do", "explain recursion with example",
+    "who won the 2019 election", "what is the difference between sql and nosql",
+    "write a javascript function to sort an array", "summarize world war 2",
+]

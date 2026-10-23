@@ -10,7 +10,7 @@ df = pd.read_csv("data/phishing_site_urls.csv")
 df = df.dropna()
 df["target"] = (df["Label"].str.lower() == "bad").astype(int)
 
-# Popular websites ko extra "good" examples ki tarah jodo
+# Add popular websites as extra "good" examples
 top = pd.read_csv("data/tranco.csv", header=None,
                   names=["rank", "domain"], nrows=50000)
 extra_urls = []
@@ -23,7 +23,7 @@ df = pd.concat([df, extra], ignore_index=True)
 df = df.drop_duplicates(subset="URL")
 print(df["Label"].value_counts())
 
-print("Extracting features (2-4 minute lagenge)...")
+print("Extracting features (takes 2-4 minutes)...")
 X = pd.DataFrame([extract_features(u) for u in df["URL"]])
 y = df["target"]
 
