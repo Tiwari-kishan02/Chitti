@@ -65,6 +65,7 @@ def ask_llm(message, history=None):
             text = resp.choices[0].message.content
             if text:
                 return text
-        except Exception:
+        except Exception as e:
+            print(f"LLM error ({prefix}):", e)
             continue
     return None
