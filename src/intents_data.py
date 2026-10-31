@@ -90,3 +90,65 @@ INTENTS["general"] = [
     "who won the 2019 election", "what is the difference between sql and nosql",
     "write a javascript function to sort an array", "summarize world war 2",
 ]
+
+
+
+INTENTS["greeting"] += [
+    "kaise ho", "kya haal hai", "hello bhai", "hi chitti kaise ho",
+    "नमस्ते", "हेलो", "हाय", "नमस्कार चिट्टी",
+]
+INTENTS["about"] += [
+    "तुम कौन हो", "आप कौन हैं", "अपना परिचय दो", "तुम क्या कर सकते हो",
+    "aap kya kar sakte ho", "tumhara naam kya hai", "tum kya ho",
+    "apne baare mein batao", "आपका नाम क्या है",
+]
+INTENTS["creator"] += [
+    "tumhe kisne banaya hai", "tumko kisne banaya", "tumhara malik kaun hai",
+    "tumhe kisne create kiya", "तुम्हें किसने बनाया", "तुम्हारा निर्माता कौन है",
+    "aapko kisne banaya", "tumhara developer kaun hai",
+]
+INTENTS["image_request"] += [
+    "ek photo banao", "mere liye image banao", "tasveer banao",
+    "ek picture draw karo", "billi ki photo generate karo",
+    "एक तस्वीर बनाओ", "मेरे लिए इमेज बनाओ", "कुत्ते की फोटो बनाओ",
+    "logo bana do", "image generate kar do",
+]
+INTENTS["thanks"] += [
+    "shukriya", "dhanyavad", "thank you bhai", "bahut shukriya",
+    "theek hai thanks", "धन्यवाद", "शुक्रिया", "अलविदा",
+    "chalo bye", "phir milte hain",
+]
+INTENTS["check_url"] += [
+    "ye link safe hai kya", "is link ko check karo", "kya ye website fake hai",
+    "ye url safe hai", "kya main is link par click kar sakta hoon",
+    "link check kar do", "क्या ये लिंक सुरक्षित है", "ये वेबसाइट सही है क्या",
+    "इस लिंक को जाँचो", "ye site asli hai ya fake",
+]
+INTENTS["check_password"] += [
+    "mera password strong hai kya", "password check karo",
+    "mere password ki strength batao", "ye password kaisa hai",
+    "पासवर्ड चेक करो", "मेरा पासवर्ड मज़बूत है क्या", "क्या ये पासवर्ड सुरक्षित है",
+    "password kitna secure hai", "password ki strength check karo",
+    "kya ye password theek hai",
+]
+INTENTS["scam_message"] += [
+    "mujhe ek message aaya hai ki maine lottery jeeti", "kya ye sms scam hai",
+    "kisi ne mujhse otp maanga", "mujhe kyc update ka message aaya",
+    "kya ye message fake hai", "bank ne account block kar diya aisa message aaya",
+    "मुझे एक संदिग्ध मैसेज आया है", "क्या ये SMS स्कैम है",
+    "किसी ने मुझसे OTP माँगा", "ye message asli hai ya scam",
+]
+INTENTS["security_qa"] += [
+    "phishing kya hota hai", "ransomware kya hai", "malware kya hai",
+    "vpn kya hota hai", "online safe kaise rahe", "strong password kaise banaye",
+    "firewall kya hota hai", "फ़िशिंग क्या होती है", "रैनसमवेयर क्या है", "2fa kya hai",
+]
+INTENTS["general"] += [
+    "python mein fibonacci ka code likho", "dbms ko aasan bhasha mein samjhao",
+    "bharat ke pehle pradhan mantri kaun the", "azadi ke andolan ke baare mein batao",
+    "mujhe java sikhao", "ek c program likh do factorial ka",
+    "bharat ka samvidhan kya hai", "इतिहास के बारे में बताओ",
+    "पायथन में कोड लिखो", "भारत के प्रधानमंत्री कौन हैं",
+    "mujhe exam ke liye study tips do", "machine learning kya hai",
+    "1857 mein kya hua tha", "mujhe ek joke sunao", "operating system samjhao",
+]

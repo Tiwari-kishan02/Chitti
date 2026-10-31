@@ -61,3 +61,23 @@ def test_chat_no_images():
 def test_chat_intro():
     r = client.post("/chat", json={"message": "who are you"})
     assert "terahertz" in r.json()["reply"].lower()
+
+
+
+def test_detect_lang():
+    from brain import detect_lang
+    assert detect_lang("who are you") == "en"
+    assert detect_lang("tum kaun ho") == "hinglish"
+    assert detect_lang("तुम कौन हो") == "hi"
+
+
+def test_chat_creator_hinglish():
+    r = client.post("/chat", json={"message": "tumhe kisne banaya hai"})
+    assert r.json()["intent"] == "creator"
+    assert "Kishan Tiwari" in r.json()["reply"]
+
+
+def test_chat_about_hindi():
+    r = client.post("/chat", json={"message": "तुम कौन हो"})
+    assert r.json()["intent"] == "about"
+    assert "चिट्टी" in r.json()["reply"]

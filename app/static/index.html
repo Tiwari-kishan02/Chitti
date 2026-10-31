@@ -36,10 +36,6 @@
           border-radius:6px; padding:2px 8px; cursor:pointer; font-size:12px; }
   pre { margin:0; padding:10px 12px; overflow-x:auto; }
   pre code { background:none; padding:0; font-size:13px; }
-  .chips { display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 10px; }
-  .chip { background:var(--panel); border:1px solid var(--line); color:var(--text);
-          border-radius:999px; padding:6px 12px; font-size:13px; cursor:pointer; }
-  .chip:hover { border-color:var(--accent); }
   form { display:flex; gap:8px; padding:12px 18px; border-top:1px solid var(--line); align-items:flex-end; }
   textarea { flex:1; resize:none; max-height:140px; padding:11px 13px; border-radius:12px;
              border:1px solid var(--line); background:var(--panel); color:var(--text);
@@ -49,9 +45,52 @@
                 color:#04222a; font-weight:600; font-size:15px; cursor:pointer; }
   button.send:disabled { opacity:.5; cursor:default; }
   footer { text-align:center; font-size:11px; color:#5f7394; padding:0 14px 10px; }
+
+  /* ---------- robotic boot intro ---------- */
+  #boot { position:fixed; inset:0; z-index:50; display:flex; flex-direction:column;
+          align-items:center; justify-content:center; gap:20px; padding:24px;
+          background:radial-gradient(circle at 50% 35%, #0e2238 0%, #050a14 70%);
+          transition:opacity .6s ease; }
+  #boot.hide { opacity:0; pointer-events:none; }
+  .face { position:relative; width:160px; height:124px; border-radius:30px; overflow:hidden;
+          border:2px solid var(--accent); background:#0b1626; display:flex;
+          align-items:center; justify-content:center; gap:28px;
+          box-shadow:0 0 34px rgba(34,211,238,.35); }
+  .eye { width:26px; height:26px; border-radius:50%; background:var(--accent);
+         box-shadow:0 0 14px var(--accent); transform:scaleY(.08); transition:transform .5s ease; }
+  .face.awake .eye { transform:scaleY(1); animation:blink 4s infinite; }
+  @keyframes blink { 0%,92%,100% { transform:scaleY(1); } 96% { transform:scaleY(.1); } }
+  .scan { position:absolute; left:0; right:0; height:3px; background:rgba(34,211,238,.55);
+          animation:scan 2.2s linear infinite; }
+  @keyframes scan { 0% { top:-4px; } 100% { top:100%; } }
+  .bootlog { width:min(460px,100%); min-height:150px; font-family:Consolas,"Courier New",monospace;
+             font-size:13px; line-height:1.7; color:var(--accent); }
+  .bootlog div { white-space:pre-wrap; }
+  .hello { min-height:36px; font-size:26px; font-weight:700; letter-spacing:1px; text-align:center; }
+  .startbtn { opacity:0; pointer-events:none; transition:opacity .4s ease; padding:12px 34px;
+              border-radius:999px; border:1px solid var(--accent); background:transparent;
+              color:var(--accent); font-size:15px; letter-spacing:3px; cursor:pointer;
+              box-shadow:0 0 16px rgba(34,211,238,.35); }
+  .startbtn.show { opacity:1; pointer-events:auto; }
+  .startbtn:hover { background:rgba(34,211,238,.12); }
+  .skip { position:absolute; bottom:18px; right:20px; background:none; border:0;
+          color:var(--muted); cursor:pointer; font-size:13px; }
 </style>
 </head>
 <body>
+
+<div id="boot">
+  <div class="face" id="face">
+    <div class="scan"></div>
+    <div class="eye"></div>
+    <div class="eye"></div>
+  </div>
+  <div class="bootlog" id="bootlog"></div>
+  <div class="hello" id="hello"></div>
+  <button class="startbtn" id="start" type="button">START</button>
+  <button class="skip" id="skip" type="button">Skip intro</button>
+</div>
+
 <div class="app">
   <header>
     <div class="logo">&#129302;</div>
@@ -63,17 +102,9 @@
 
   <div id="chat"></div>
 
-  <div class="chips" id="chips">
-    <button class="chip" type="button">Who are you?</button>
-    <button class="chip" type="button">Is google.com safe?</button>
-    <button class="chip" type="button">Write a Python program for fibonacci series</button>
-    <button class="chip" type="button">Explain DBMS in simple words</button>
-    <button class="chip" type="button">What is phishing?</button>
-  </div>
-
   <form id="form">
     <textarea id="input" rows="1" maxlength="4000"
-      placeholder="Ask anything, or paste a link, password or message..."></textarea>
+      placeholder="Ask in English, हिंदी or Hinglish..."></textarea>
     <button class="send" id="send" type="submit">Send</button>
   </form>
   <footer>Chitti can make mistakes. Never share real passwords, OTPs or card details here.</footer>
@@ -84,7 +115,6 @@
   const form = document.getElementById("form");
   const input = document.getElementById("input");
   const sendBtn = document.getElementById("send");
-  const chips = document.getElementById("chips");
   let history = [];
 
   function escapeHtml(s) {
@@ -147,7 +177,6 @@
 
   async function send(text) {
     addUser(text);
-    chips.style.display = "none";
     sendBtn.disabled = true;
     const thinking = addBot("Thinking...");
 
@@ -197,11 +226,68 @@
     input.style.height = Math.min(input.scrollHeight, 140) + "px";
   });
 
-  chips.addEventListener("click", (e) => {
-    if (e.target.classList.contains("chip")) send(e.target.textContent);
+  /* ---------- boot intro ---------- */
+  const boot = document.getElementById("boot");
+  const face = document.getElementById("face");
+  const bootlog = document.getElementById("bootlog");
+  const hello = document.getElementById("hello");
+  const startBtn = document.getElementById("start");
+  let bootActive = true;
+  let entered = false;
+
+  const BOOT_LINES = [
+    "> INITIALIZING CHITTI ...",
+    "> SPEED ............ 1 TERAHERTZ",
+    "> MEMORY ........... 1 ZETTABYTE",
+    "> LOADING SECURITY MODULES ... OK",
+    "> LANGUAGES: ENGLISH | HINDI | HINGLISH ... OK",
+    "> ALL SYSTEMS ONLINE"
+  ];
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  async function typeInto(el, text, speed) {
+    for (let i = 1; i <= text.length; i++) {
+      if (!bootActive) return;
+      el.textContent = text.slice(0, i);
+      await sleep(speed);
+    }
+  }
+
+  async function runBoot() {
+    await sleep(400);
+    face.classList.add("awake");
+    await sleep(700);
+    for (const line of BOOT_LINES) {
+      if (!bootActive) return;
+      const div = document.createElement("div");
+      bootlog.appendChild(div);
+      await typeInto(div, line, 14);
+      await sleep(160);
+    }
+    if (!bootActive) return;
+    await typeInto(hello, "Hi, I am Chitti.", 60);
+    startBtn.classList.add("show");
+    startBtn.focus();
+  }
+
+  function enterChat() {
+    if (entered) return;
+    entered = true;
+    bootActive = false;
+    boot.classList.add("hide");
+    setTimeout(() => { boot.style.display = "none"; }, 650);
+    addBot("Hi, I am Chitti. You can talk to me in English, Hindi (हिंदी) or Hinglish. Ask me about studies, code, history, or send a link, password or message to check.");
+    input.focus();
+  }
+
+  startBtn.addEventListener("click", enterChat);
+  document.getElementById("skip").addEventListener("click", enterChat);
+  document.addEventListener("keydown", (e) => {
+    if (!entered && e.key === "Enter") enterChat();
   });
 
-  addBot("Hi, I am Chitti. Ask me about studies, history or code, or send me a link, password or suspicious message to check.");
+  runBoot();
 </script>
 </body>
 </html>
