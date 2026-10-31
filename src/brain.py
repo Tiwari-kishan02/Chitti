@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from knowledge import KNOWLEDGE
-from llm import ask_llm
+from llm import ask_llm, get_last_status
 from predict import check_url
 
 intent_model = joblib.load("models/chitti_intent_model.pkl")
@@ -153,7 +153,7 @@ def handle_scam(text, urls):
                "bad" if bad else None, " | ".join(notes))
 
 
-def respond(message, history=None):
+def respond(message, history=None, allow_llm=True):
     text = message.strip()
     urls = URL_REGEX.findall(text)
     intent, conf = predict_intent(text)
@@ -193,13 +193,25 @@ def respond(message, history=None):
     if intent == "security_qa" and strong:
         return out("security_qa", strong)
 
-    reply = ask_llm(text, history)
+    reply = ask_llm(text, history) if allow_llm else None
     if reply:
         return out("llm", reply)
 
     weak = answer_question(text, 0.12)
     if weak:
         return out("security_qa", weak)
+
+    if not allow_llm:
+        return out("unknown",
+                   "You have reached today's limit of AI answers on this demo. "
+                   "Please come back tomorrow. I can still check links, passwords "
+                   "and suspicious messages.")
+    if get_last_status() == "rate_limit":
+        return out("unknown",
+                   "I have used up my free AI quota for now, so I cannot answer open "
+                   "questions. Please try again in a few minutes, or later if the daily "
+                   "quota is finished. I can still check links, passwords and "
+                   "suspicious messages.")
     return out("unknown",
                "My AI language model is not connected right now, so I cannot answer "
                "open questions. I can still check links, passwords and suspicious messages.")

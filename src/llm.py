@@ -15,6 +15,11 @@ Rules:
 - For medical, legal or financial topics, give general information and suggest a professional."""
 
 _clients = {}
+_last_status = None
+
+
+def get_last_status():
+    return _last_status
 
 
 def _providers():
@@ -35,12 +40,15 @@ def _client(prefix, base, key):
 
 
 def ask_llm(message, history=None):
+    global _last_status
+    _last_status = None
+
     providers = _providers()
     if not providers:
         return None
 
     msgs = []
-    for h in (history or [])[-8:]:
+    for h in (history or [])[-6:]:
         role, content = h.get("role"), h.get("content")
         if role in ("user", "assistant") and content:
             msgs.append({"role": role, "content": str(content)[:2000]})
@@ -60,12 +68,14 @@ def ask_llm(message, history=None):
     for prefix, base, key, model in providers:
         try:
             resp = _client(prefix, base, key).chat.completions.create(
-                model=model, messages=full, max_tokens=1000
+                model=model, messages=full, max_tokens=800
             )
             text = resp.choices[0].message.content
             if text:
                 return text
         except Exception as e:
+            if getattr(e, "status_code", None) == 429:
+                _last_status = "rate_limit"
             print(f"LLM error ({prefix}):", e)
             continue
     return None

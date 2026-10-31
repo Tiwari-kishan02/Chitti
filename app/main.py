@@ -1,3 +1,4 @@
+import datetime
 import sys
 import time
 from collections import defaultdict, deque
@@ -16,11 +17,14 @@ STATIC = Path(__file__).resolve().parent / "static"
 app = FastAPI(
     title="Chitti",
     description="AI assistant: security skills plus general knowledge and code help",
-    version="0.4.0",
+    version="0.5.0",
 )
 
 HITS = defaultdict(deque)
 LIMIT, WINDOW = 20, 60  # max 20 chat requests per minute per IP
+
+AI_USED = defaultdict(int)
+DAILY_AI_LIMIT = 30  # max AI (LLM) answers per visitor per day
 
 
 def too_many_requests(ip):
@@ -66,8 +70,19 @@ def chat(req: ChatRequest, request: Request):
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
     if len(req.message) > 4000:
         raise HTTPException(status_code=400, detail="Message is too long (max 4000 characters).")
+
     ip = (request.headers.get("x-forwarded-for", "").split(",")[0].strip()
           or (request.client.host if request.client else "unknown"))
     if too_many_requests(ip):
         raise HTTPException(status_code=429, detail="Too many requests. Please wait a minute and try again.")
-    return respond(req.message, req.history)
+
+    day = datetime.date.today().isoformat()
+    for k in list(AI_USED):
+        if k[1] != day:
+            del AI_USED[k]
+    key = (ip, day)
+
+    result = respond(req.message, req.history, allow_llm=AI_USED[key] < DAILY_AI_LIMIT)
+    if result.get("intent") == "llm":
+        AI_USED[key] += 1
+    return result
